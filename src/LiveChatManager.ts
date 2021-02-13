@@ -10,7 +10,6 @@ import LocalIOPublisher from './services/LocalIOPublisher'
 import RobotJSIOController from './services/RobotJSIOController'
 import LiveChatAdapter from './services/LiveChatAdapter'
 import { CommandConfig, Configs, loadCommandConfig, readConfig } from './utils/loadConfig'
-import AbstractLiveChatAdapter from './services/abstracts/AbstractLiveChatAdapter'
 import LiveChatCustomCommandAdapter from './services/LiveChatCustomCommandAdapter'
 import IMacroPlayer from './services/interfaces/IMacroPlayer'
 import MacroManager from './services/MacroManager'
@@ -20,10 +19,12 @@ import YoutubeApiLiveChatPublisher from './services/YoutubeApiLiveChatPublisher'
 import WebServerController from './controllers/WebServerController'
 import LiveChatReplaceAdapter from './services/LiveChatReplaceAdapter'
 import PoolCommandAdapter from './services/PoolCommandAdapter'
+import { BrowserWindow } from 'electron'
 
 export default class LiveChatManager {
     private sourcePath: string
     private commandPath: string
+    private mainWindow: BrowserWindow
 
     private source!: Configs
     private commandConfig!: CommandConfig
@@ -41,9 +42,10 @@ export default class LiveChatManager {
     private twitchPublisher!: ILiveChatPublisher
     private youtubePublisher!: ILiveChatPublisher
 
-    public constructor(sourceConfigPath: string, commandConfigPath: string) {
+    public constructor(sourceConfigPath: string, commandConfigPath: string, mainWindow: BrowserWindow) {
         this.sourcePath = sourceConfigPath
         this.commandPath = commandConfigPath
+        this.mainWindow = mainWindow
 
         this.loadConfig()
         this.init()
@@ -92,7 +94,7 @@ export default class LiveChatManager {
     }
 
     private createWebServer() {
-        this.webServer = WebServerController.getInstance(3000)
+        this.webServer = WebServerController.getInstance(3000, this.mainWindow)
     }
 
     private createAdminControllers() {

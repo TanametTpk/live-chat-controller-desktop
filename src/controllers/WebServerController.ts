@@ -3,6 +3,7 @@ import http from 'http'
 import socket, {Socket} from 'socket.io'
 import path from 'path'
 import MacroManager from '../services/MacroManager'
+import { BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
 
 export default class WebServerController {
     private port: number
@@ -10,24 +11,26 @@ export default class WebServerController {
     private http: http.Server
     private io: socket.Server
     private isStart: boolean
+    private mainWindow: BrowserWindow
     private static instance: WebServerController
 
-    public constructor(port: number){
+    public constructor(port: number, mainWindow: BrowserWindow){
         this.port = port
         this.app = express()
         this.http = http.createServer(this.app)
         this.io = new socket.Server(this.http)
         this.isStart = false
+        this.mainWindow = mainWindow
         this.setup()
     }
 
-    public static getInstance(port: number = 3000): WebServerController {
-        if (!this.instance) this.instance = new WebServerController(port)
+    public static getInstance(port: number = 3000, mainWindow: BrowserWindow): WebServerController {
+        if (!this.instance) this.instance = new WebServerController(port, mainWindow)
         return this.instance
     }
 
     private setup(): void{
-        this.app.get('/', (req: Request, res: Response) => {
+        this.app.get('/', (_: Request, res: Response) => {
             res.sendFile(path.resolve(__dirname, '../../templates/index.html'))
         })
 
@@ -39,11 +42,23 @@ export default class WebServerController {
                 MacroManager.getInstance().update(oldName, newName)
             })
 
+            ipcMain.on("macro:rename", (_: IpcMainEvent, oldName: string, newName: string) => {
+                MacroManager.getInstance().update(oldName, newName)
+            })
+
             socket.on('remove-macro', (name: string) => {
                 MacroManager.getInstance().delete(name)
             })
 
+            ipcMain.on("macro:remove", (_: IpcMainEvent, name: string) => {
+                MacroManager.getInstance().delete(name)
+            })
+
             socket.on('play-macro', (name: string) => {
+                MacroManager.getInstance().play(name)
+            })
+
+            ipcMain.on("macro:play", (_: IpcMainEvent, name: string) => {
                 MacroManager.getInstance().play(name)
             })
         })
@@ -63,10 +78,12 @@ export default class WebServerController {
     public sendNewMacro(macroName: string): void {
         if (!this.isStart) return
         this.io.emit('new-macro', macroName)
+        this.mainWindow.webContents.send('macro:new', macroName)
     }
 
     public sendMacros(macroList: string[]): void {
         if (!this.isStart) return
         this.io.emit('macros', macroList)
+        this.mainWindow.webContents.send('macro:list', macroList)
     }
 }

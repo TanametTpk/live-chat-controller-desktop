@@ -81,7 +81,8 @@ const createWindow = async () => {
 
   liveChatManager = new LiveChatManager(
     getAssetPath('./configs/config.json'),
-    getAssetPath('./configs/commands.json')
+    getAssetPath('./configs/commands.json'),
+    mainWindow
   )
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
