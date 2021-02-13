@@ -1,0 +1,24 @@
+{
+    "youtube": {
+        "allow": false,
+        "useAPI": false,
+        "API_KEY": "API_KEY",
+        "CHANNEL_ID": "CHANNEL_ID",
+        "STREAM_ID": "STREAM_ID",
+        "INTERVAL": 1000
+    },
+    "discord": {
+        "allow": false,
+        "token": "token"
+    },
+    "twitch": {
+        "allow": false,
+        "channel": "name"
+    },
+    "webhooks": {
+        "allow": false,
+        "urls": [
+            "http://localhost:5000/webhooks"
+        ]
+    }
+}
