@@ -46,6 +46,8 @@ export default class WebServerController {
             })
         })
 
+        console.log("setup");
+        
         ipcMain.on("connected", (_: IpcMainEvent) => {
             this.sendMacros(MacroManager.getInstance().getMacroList())
         })
@@ -72,6 +74,7 @@ export default class WebServerController {
 
     public stop(): void {
         this.http.close()
+        console.log(`socket is closed`)
     }
 
     public sendNewMacro(macroName: string): void {

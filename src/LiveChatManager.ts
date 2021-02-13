@@ -81,8 +81,6 @@ export default class LiveChatManager {
         
             publisher.start()
         }
-        
-        this.webServer.start()
     }
 
     private init(): void {
@@ -95,6 +93,7 @@ export default class LiveChatManager {
 
     private createWebServer() {
         this.webServer = WebServerController.getInstance(3000, this.mainWindow)
+        this.webServer.start()
     }
 
     private createAdminControllers() {
@@ -157,7 +156,10 @@ export default class LiveChatManager {
             const publisher = publishers[i];
             publisher.stop()
         }
-        
+    }
+
+    public clear(): void {
+        this.close()
         this.webServer.stop()
     }
 

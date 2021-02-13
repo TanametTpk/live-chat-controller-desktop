@@ -11,11 +11,12 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import LiveChatManager from './LiveChatManager';
+import { IpcMainEvent } from 'electron/main';
 
 export default class AppUpdater {
   constructor() {
@@ -99,8 +100,6 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
-
-    liveChatManager?.start()
   });
 
   mainWindow.on('closed', () => {
@@ -128,7 +127,7 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (liveChatManager) liveChatManager.close()
+  if (liveChatManager) liveChatManager.clear()
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -141,3 +140,11 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+ipcMain.on('livechat:start', (_: IpcMainEvent) => {
+  liveChatManager?.start()
+})
+
+ipcMain.on('livechat:stop', (_: IpcMainEvent) => {
+  liveChatManager?.close()
+})

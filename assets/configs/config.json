@@ -13,7 +13,7 @@
     },
     "twitch": {
         "allow": false,
-        "channel": "name"
+        "channel": "channel"
     },
     "webhooks": {
         "allow": false,
