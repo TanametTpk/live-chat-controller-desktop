@@ -24,8 +24,8 @@ export default class WebServerController {
         this.setup()
     }
 
-    public static getInstance(port: number = 3000, mainWindow: BrowserWindow): WebServerController {
-        if (!this.instance) this.instance = new WebServerController(port, mainWindow)
+    public static getInstance(port: number = 3000, mainWindow?: BrowserWindow): WebServerController {
+        if (!this.instance && mainWindow) this.instance = new WebServerController(port, mainWindow)
         return this.instance
     }
 

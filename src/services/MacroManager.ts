@@ -25,22 +25,22 @@ async function listCommands(): Promise<string[] | undefined> {
 }
 
 async function recordMacro(name: string) {
-    const { stderr } = await exec(`python ./macroRecorder/commandline.py -n "${name}" -c record`);
+    const { stderr } = await exec(`${pythonPath} ${scriptPath} -n "${name}" -c record`);
     if (stderr) console.log('record macro error:', stderr);
 }
 
 async function playMacro(name: string) {
-    const { stderr } = await exec(`python ./macroRecorder/commandline.py -n "${name}" -c play`);
+    const { stderr } = await exec(`${pythonPath} ${scriptPath} -n "${name}" -c play`);
     if (stderr) console.log('play macro error:', stderr);
 }
 
 async function removeMacro(name: string) {
-    const { stderr } = await exec(`python ./macroRecorder/commandline.py -n "${name}" -c remove`);
+    const { stderr } = await exec(`${pythonPath} ${scriptPath} -n "${name}" -c remove`);
     if (stderr) console.log('remove macro error:', stderr);
 }
 
 async function renameMacro(oldname: string, newName: string) {
-    const { stderr } = await exec(`python ./macroRecorder/commandline.py -n "${oldname}" -c update -t "${newName}"`);
+    const { stderr } = await exec(`${pythonPath} ${scriptPath} -n "${oldname}" -c update -t "${newName}"`);
     if (stderr) console.log('remove macro error:', stderr);
 }
 
