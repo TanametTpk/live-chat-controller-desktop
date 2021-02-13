@@ -1,7 +1,6 @@
-import express, {Request, Response} from 'express'
+import express from 'express'
 import http from 'http'
 import socket, {Socket} from 'socket.io'
-import path from 'path'
 import MacroManager from '../services/MacroManager'
 import { BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
 
@@ -30,10 +29,6 @@ export default class WebServerController {
     }
 
     private setup(): void{
-        this.app.get('/', (_: Request, res: Response) => {
-            res.sendFile(path.resolve(__dirname, '../../templates/index.html'))
-        })
-
         this.io.on("connection", (socket: Socket) => {
             console.log("connented");
             this.sendMacros(MacroManager.getInstance().getMacroList())
@@ -42,32 +37,36 @@ export default class WebServerController {
                 MacroManager.getInstance().update(oldName, newName)
             })
 
-            ipcMain.on("macro:rename", (_: IpcMainEvent, oldName: string, newName: string) => {
-                MacroManager.getInstance().update(oldName, newName)
-            })
-
             socket.on('remove-macro', (name: string) => {
-                MacroManager.getInstance().delete(name)
-            })
-
-            ipcMain.on("macro:remove", (_: IpcMainEvent, name: string) => {
                 MacroManager.getInstance().delete(name)
             })
 
             socket.on('play-macro', (name: string) => {
                 MacroManager.getInstance().play(name)
             })
+        })
 
-            ipcMain.on("macro:play", (_: IpcMainEvent, name: string) => {
-                MacroManager.getInstance().play(name)
-            })
+        ipcMain.on("connected", (_: IpcMainEvent) => {
+            this.sendMacros(MacroManager.getInstance().getMacroList())
+        })
+
+        ipcMain.on("macro:rename", (_: IpcMainEvent, oldName: string, newName: string) => {
+            MacroManager.getInstance().update(oldName, newName)
+        })
+
+        ipcMain.on("macro:remove", (_: IpcMainEvent, name: string) => {
+            MacroManager.getInstance().delete(name)
+        })
+
+        ipcMain.on("macro:play", (_: IpcMainEvent, name: string) => {
+            MacroManager.getInstance().play(name)
         })
     }
 
     public start(): void {
         this.isStart = true
         this.http.listen(this.port, () => {
-            console.log(`website is running on: http://localhost:${this.port}`)
+            console.log(`socket is running on: http://localhost:${this.port}`)
         })
     }
 

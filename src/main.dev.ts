@@ -99,6 +99,8 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+
+    liveChatManager?.start()
   });
 
   mainWindow.on('closed', () => {
