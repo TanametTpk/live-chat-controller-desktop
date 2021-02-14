@@ -77,6 +77,7 @@ export default class MacroManager implements IMacroRecorder, IMacroPlayer {
         this.playingMacro.set(marcoName, true)
         playMacro(marcoName).then(() => {
             this.playingMacro.delete(marcoName)
+            WebServerController.getInstance().sendFinishPlaying()
         })
     }
 
@@ -94,8 +95,10 @@ export default class MacroManager implements IMacroRecorder, IMacroPlayer {
     
     public async record(marcoName: string){
         if (this.isRecord) return
+        WebServerController.getInstance().sendRecording()
         await recordMacro(marcoName)
         this.loadMacro()
+        WebServerController.getInstance().stopRecorded()
     }
 
     public async update(oldName: string, newName: string) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
+import 'antd/dist/antd.css';
 import HomePage from './pages/Home';
 import MacroPage from './pages/Macro';
 import SettingPage from './pages/Settings';

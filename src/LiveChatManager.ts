@@ -9,7 +9,7 @@ import ICommandPublisher from './services/interfaces/ICommandPublisher'
 import LocalIOPublisher from './services/LocalIOPublisher'
 import RobotJSIOController from './services/RobotJSIOController'
 import LiveChatAdapter from './services/LiveChatAdapter'
-import { CommandConfig, Configs, loadCommandConfig, readConfig } from './utils/loadConfig'
+import { CommandConfig, Configs, KeywordConfig, loadCommandConfig, readConfig } from './utils/loadConfig'
 import LiveChatCustomCommandAdapter from './services/LiveChatCustomCommandAdapter'
 import IMacroPlayer from './services/interfaces/IMacroPlayer'
 import MacroManager from './services/MacroManager'
@@ -69,9 +69,6 @@ export default class LiveChatManager {
             this.twitchPublisher
         ]
         
-        this.ioPublisher.register(this.localController)
-        this.ioPublisher.start()
-        
         for (let i = 0; i < publishers.length; i++) {
             if (!allowList[i]) continue
             const publisher = publishers[i];
@@ -89,6 +86,7 @@ export default class LiveChatManager {
         this.createSubscribers()
         this.createPublishers()
         this.createAdapters()
+        this.startAdminController()
     }
 
     private createWebServer() {
@@ -118,6 +116,11 @@ export default class LiveChatManager {
             new ScrapingLiveChatPublisher(this.source.youtube)
     }
 
+    private startAdminController() {
+        this.ioPublisher.register(this.localController)
+        this.ioPublisher.start()
+    }
+
     private createAdapters() {
         if (this.commandConfig.useOnlyDefined) {
             this.chatSubscriber = new LiveChatCustomCommandAdapter(this.chatSubscriber, this.commandConfig.commands)
@@ -127,13 +130,17 @@ export default class LiveChatManager {
             this.webHookSubscriber = new LiveChatAdapter(this.webHookSubscriber, this.commandConfig.commands)
         }
 
+        let poolCommands: KeywordConfig[] = this.commandConfig.commands
         if (this.commandConfig.useReplace) {
+            poolCommands = this.commandConfig.replaces
             this.chatSubscriber = new LiveChatReplaceAdapter(this.chatSubscriber, this.commandConfig.replaces)
             this.webHookSubscriber = new LiveChatReplaceAdapter(this.webHookSubscriber, this.commandConfig.replaces)
         }
 
-        this.chatSubscriber = new PoolCommandAdapter(this.chatSubscriber, 0)
-        this.webHookSubscriber = new PoolCommandAdapter(this.webHookSubscriber, 0)
+        if (this.commandConfig.usePool) {
+            this.chatSubscriber = new PoolCommandAdapter(this.chatSubscriber, poolCommands, this.commandConfig.pool)
+            this.webHookSubscriber = new PoolCommandAdapter(this.webHookSubscriber, poolCommands, this.commandConfig.pool)
+        }
     }
 
     public close(): void {
@@ -160,12 +167,14 @@ export default class LiveChatManager {
 
     public clear(): void {
         this.close()
+        this.ioPublisher.stop()
         this.webServer.stop()
     }
 
     public reload(): void {
         this.close()
         this.loadConfig()
+        this.init()
         this.start()
     }
 }

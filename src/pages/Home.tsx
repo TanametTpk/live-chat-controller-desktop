@@ -10,10 +10,12 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    color: black;
 `
 
 const HeaderText = styled.h1`
     font-size: 5em;
+    color: white;
 `
 
 const Home = () => {
@@ -46,7 +48,7 @@ const Home = () => {
                         !isStart ?
                         <>
                             <span role="img" aria-label="books">
-                            🔴⭐
+                            ⭐
                             </span>
                             Start Live Chat
                         </>

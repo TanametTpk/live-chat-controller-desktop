@@ -106,5 +106,9 @@
     ],
     "replaces": [],
     "useOnlyDefined": true,
-    "useReplace": false
+    "useReplace": false,
+    "usePool": true,
+    "pool": {
+        "defaultRatio": 3
+    }
 }

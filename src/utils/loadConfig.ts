@@ -5,11 +5,18 @@ export interface CommandConfig {
     replaces: KeywordConfig[]
     useReplace: boolean
     useOnlyDefined: boolean
+    usePool: boolean
+    pool: PoolConfig
+}
+
+export interface PoolConfig {
+    defaultRatio: number
 }
 
 export interface KeywordConfig {
     words: string[]
     toCommand: string
+    ratio?: number
 }
 
 export interface YoutubeConfig {

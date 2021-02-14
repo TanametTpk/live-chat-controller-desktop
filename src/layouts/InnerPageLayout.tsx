@@ -22,17 +22,22 @@ const BackButton = styled.div`
     cursor: pointer;
 `
 
-const Layout: React.FC = ({ children }) => {
+interface Props {
+    disableBack?: boolean
+}
+
+const Layout: React.FC<Props> = ({ children, disableBack }) => {
     const history = useHistory()
     
     const goBack = () => {
-        history.goBack()
+        if (!disableBack) history.goBack()
     }
 
     return (
         <Container>
             <TopBar>
                 <BackButton
+                    style={{ color: disableBack ? "gray" : "white" }}
                     onClick={goBack}
                 >
                     back

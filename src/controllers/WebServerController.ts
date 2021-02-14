@@ -47,9 +47,9 @@ export default class WebServerController {
         })
 
         console.log("setup");
-        
-        ipcMain.on("connected", (_: IpcMainEvent) => {
-            this.sendMacros(MacroManager.getInstance().getMacroList())
+
+        ipcMain.on('macro:get', (event: IpcMainEvent) => {
+            event.returnValue = MacroManager.getInstance().getMacroList()
         })
 
         ipcMain.on("macro:rename", (_: IpcMainEvent, oldName: string, newName: string) => {
@@ -62,6 +62,10 @@ export default class WebServerController {
 
         ipcMain.on("macro:play", (_: IpcMainEvent, name: string) => {
             MacroManager.getInstance().play(name)
+        })
+
+        ipcMain.on("macro:record", (_: IpcMainEvent, name: string) => {
+            MacroManager.getInstance().record(name)
         })
     }
 
@@ -87,5 +91,17 @@ export default class WebServerController {
         if (!this.isStart) return
         this.io.emit('macros', macroList)
         this.mainWindow.webContents.send('macro:list', macroList)
+    }
+
+    public sendRecording(): void {
+        this.mainWindow.webContents.send('macro:onStartRecord')
+    }
+
+    public stopRecorded(): void {
+        this.mainWindow.webContents.send('macro:onStopRecord')
+    }
+
+    public sendFinishPlaying(): void {
+        this.mainWindow.webContents.send('macro:stopPlaying')
     }
 }
