@@ -7,15 +7,20 @@ const Settings = () => {
     const [settings, setSettings] = useState<string[]>()
 
     useEffect(() => {
-        ipcRenderer.send('settings:get', (settings: string[]) => {
-            setSettings(settings)
-        })
+        getSetting()
     }, [])
 
+    const getSetting = () => {
+        let settings = ipcRenderer.sendSync('settings:get')
+        setSettings(settings)
+    }
+
     const saveSetting = () => {
-        ipcRenderer.send('settings:save', (settings: string[]) => {
-            setSettings(settings)
-        })
+        ipcRenderer.send('settings:save', settings)
+    }
+
+    const reloadSetting = () => {
+        ipcRenderer.send('system:reload')
     }
 
     return (
