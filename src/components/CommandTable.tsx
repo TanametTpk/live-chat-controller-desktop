@@ -1,7 +1,8 @@
 import React from 'react'
-import { Table, Tag, Space } from 'antd';
+import { Table, Tag, Space, Modal } from 'antd';
 import { CommandConfig, KeywordConfig } from '../utils/loadConfig';
 import { ColumnsType } from 'antd/lib/table';
+import CommandForm from './CommandForm';
 
 interface Props {
     commands?: CommandConfig
@@ -9,7 +10,8 @@ interface Props {
 
 export type DataKeywordConfig = KeywordConfig & {key: string}
 
-const columns: ColumnsType<DataKeywordConfig> = [
+const CommandTable: React.FC<Props> = ({ commands }) => {
+  const columns: ColumnsType<DataKeywordConfig> = [
     {
       title: 'Command',
       dataIndex: 'toCommand',
@@ -53,45 +55,57 @@ const columns: ColumnsType<DataKeywordConfig> = [
     {
       title: 'Action',
       key: 'action',
-      render: () => (
+      render: (config: DataKeywordConfig) => (
         <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
+          <a
+            onClick={() => {
+              Modal.info({
+                title: `Edit Command`,
+                content: <CommandForm />,
+                onOk: () => {
+                  console.log("saved", config.key);
+                }
+              })
+            }}
+          >
+            Edit
+          </a>
+          <a 
+            onClick={() => {
+              Modal.confirm({
+                title: `Confirm Delete Action`,
+                content: `Are You Really Want To Delete "${config.toCommand}" ?`,
+                onOk: () => {
+                  console.log("delete", config.key);
+                }
+              })
+            }}
+          >
+            Delete
+          </a>
         </Space>
       ),
     },
-];
+  ];
 
-const data: DataKeywordConfig[] = [
-    {
-        key: '0',
-        words: [
-            "ขวา",
-            "right",
-            "r"
-        ],
-        toCommand: "press d"
-    },
-];
+  const getKeywords = (): DataKeywordConfig[] => {
+      if (!commands) return []
 
-const CommandTable: React.FC<Props> = ({ commands }) => {
-    const getKeywords = (): DataKeywordConfig[] => {
-        if (!commands) return []
+      let keywords: KeywordConfig[] = commands?.commands
+      if (commands?.useReplace) {
+          keywords = commands.replaces
+      }
 
-        let keywords: KeywordConfig[] = commands?.commands
-        if (commands?.useReplace) {
-            keywords = commands.replaces
-        }
+      return keywords.map((keyword: KeywordConfig, index: number): DataKeywordConfig => {
+          return {
+              ...keyword,
+              key: index.toString()
+          }
+      })
+  }
 
-        return keywords.map((keyword: KeywordConfig, index: number): DataKeywordConfig => {
-            return {
-                ...keyword,
-                key: index.toString()
-            }
-        })
-    }
-
-    return (
+  return (
+      <>
         <Table
             columns={columns}
             dataSource={getKeywords()}
@@ -100,7 +114,8 @@ const CommandTable: React.FC<Props> = ({ commands }) => {
                 defaultPageSize: 6
             }}
         />
-    )
+      </>
+  )
 }
 
 export default CommandTable

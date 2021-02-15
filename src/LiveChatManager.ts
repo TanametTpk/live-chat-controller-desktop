@@ -56,7 +56,7 @@ export default class LiveChatManager {
   private discordPublisher!: ILiveChatPublisher;
 
   private twitchPublisher!: ILiveChatPublisher;
-  
+
   private youtubePublisher!: ILiveChatPublisher;
 
   public constructor(
@@ -242,7 +242,6 @@ export default class LiveChatManager {
     this.clear();
     this.loadConfig();
     this.init();
-    this.start();
 
     this.mainWindow.webContents.send('settings:received', {
       sources: this.source,

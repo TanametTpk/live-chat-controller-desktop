@@ -40,6 +40,7 @@ export default class LocalIOPublisher implements ICommandPublisher {
     }
 
     stop(): void {
+        ioHook.removeAllListeners('keydown')
         ioHook.stop()
     }
 

@@ -2,23 +2,23 @@
 	"youtube": {
 		"allow": false,
 		"useAPI": false,
-		"API_KEY": "API_KEY",
-		"CHANNEL_ID": "CHANNEL_ID",
-		"STREAM_ID": "STREAM_ID",
-		"INTERVAL": 1000
+		"API_KEY": "",
+		"CHANNEL_ID": "",
+		"STREAM_ID": "",
+		"INTERVAL": null
 	},
 	"discord": {
 		"allow": false,
-		"token": "token"
+		"token": ""
 	},
 	"twitch": {
 		"allow": false,
-		"channel": "channel"
+		"channel": ""
 	},
 	"webhooks": {
 		"allow": false,
 		"urls": [
-			"http://localhost:5000/webhooks"
+			""
 		]
 	}
 }
