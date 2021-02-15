@@ -148,3 +148,7 @@ ipcMain.on('livechat:start', (_: IpcMainEvent) => {
 ipcMain.on('livechat:stop', (_: IpcMainEvent) => {
   liveChatManager?.close()
 })
+
+ipcMain.on('system:reload', (_: IpcMainEvent) => {
+  liveChatManager?.reload()
+})

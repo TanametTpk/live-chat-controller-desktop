@@ -19,7 +19,8 @@ import YoutubeApiLiveChatPublisher from './services/YoutubeApiLiveChatPublisher'
 import WebServerController from './controllers/WebServerController'
 import LiveChatReplaceAdapter from './services/LiveChatReplaceAdapter'
 import PoolCommandAdapter from './services/PoolCommandAdapter'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
+import { Settings, writeConfig } from './utils/ConfigWriter'
 
 export default class LiveChatManager {
     private sourcePath: string
@@ -87,6 +88,19 @@ export default class LiveChatManager {
         this.createPublishers()
         this.createAdapters()
         this.startAdminController()
+
+        ipcMain.removeAllListeners('settings:get')
+        ipcMain.removeAllListeners('settings:save')
+        ipcMain.on('settings:get', (event: IpcMainEvent) => {
+            event.returnValue = {
+                sources: this.source,
+                commands: this.commandConfig
+            }
+        })
+
+        ipcMain.on('settings:save', (_: IpcMainEvent, settings: Settings) => {
+            writeConfig(this.sourcePath, this.commandPath, settings)
+        })
     }
 
     private createWebServer() {
@@ -169,12 +183,20 @@ export default class LiveChatManager {
         this.close()
         this.ioPublisher.stop()
         this.webServer.stop()
+
+        ipcMain.removeAllListeners('settings:get')
+        ipcMain.removeAllListeners('settings:save')
     }
 
     public reload(): void {
-        this.close()
+        this.clear()
         this.loadConfig()
         this.init()
         this.start()
+
+        this.mainWindow.webContents.send('settings:received', {
+            sources: this.source,
+            commands: this.commandConfig
+        })
     }
 }

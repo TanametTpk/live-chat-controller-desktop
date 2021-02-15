@@ -3,6 +3,7 @@ import http from 'http'
 import socket, {Socket} from 'socket.io'
 import MacroManager from '../services/MacroManager'
 import { BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
+import { readConfig } from '../utils/loadConfig'
 
 export default class WebServerController {
     private port: number
@@ -45,8 +46,6 @@ export default class WebServerController {
                 MacroManager.getInstance().play(name)
             })
         })
-
-        console.log("setup");
 
         ipcMain.on('macro:get', (event: IpcMainEvent) => {
             event.returnValue = MacroManager.getInstance().getMacroList()
