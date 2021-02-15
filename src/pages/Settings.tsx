@@ -6,6 +6,7 @@ import { Settings } from '../utils/ConfigWriter'
 import isequal from 'lodash.isequal'
 import SourcesForm from '../components/SourcesForm'
 import CommandTable from '../components/CommandTable'
+import useModal from '../hooks/useModal'
 
 const HeaderContainer = styled.div`
     display: flex;
@@ -15,9 +16,11 @@ const HeaderContainer = styled.div`
 `
 
 const SettingPage = () => {
-    const [isCommandTabSelected, setCommandTab]     = useState<boolean>(false)
-    const [settings, setSettings]                   = useState<Settings>()
-    const [originalSettings, setOriginalSetting]    = useState<Settings>()
+    const [isCommandTabSelected, setCommandTab]             = useState<boolean>(false)
+    const [settings, setSettings]                           = useState<Settings>()
+    const [originalSettings, setOriginalSetting]            = useState<Settings>()
+    const [isNewModalOpen, newModalOpen, newModalClose]     = useModal()
+    const [isEditModalOpen, editModalOpen, editModalClose]  = useModal()
 
     useEffect(() => {
         getSetting()
@@ -51,6 +54,12 @@ const SettingPage = () => {
         return isequal(settings, originalSettings)
     }
 
+    const addNewCommand = () => {
+        // open modal
+        // form
+        // add to settings
+    }
+
     return (
         <InnerPageLayout>
             <HeaderContainer>
@@ -74,26 +83,41 @@ const SettingPage = () => {
                         Commands
                     </button>
                 </div>
-                <button
-                    type="button"
-                    className={isSettingChanged() ? "mainBtn" : "disableBtn"}
-                    onClick={() => saveSetting()}
-                >
-                    <span role="img" aria-label="books">
-                    💾
-                    </span>
-                    Save
-                </button>
+                <div>
+                    {
+                        isCommandTabSelected &&
+                        <button
+                            type="button"
+                            className="mainBtn"
+                            onClick={() => addNewCommand()}
+                        >
+                            <span role="img" aria-label="books">
+                            📝
+                            </span>
+                            Add Command
+                        </button>
+                    }
+                    <button
+                        type="button"
+                        className={isSettingChanged() ? "mainBtn" : "disableBtn"}
+                        onClick={() => saveSetting()}
+                    >
+                        <span role="img" aria-label="books">
+                        💾
+                        </span>
+                        Save
+                    </button>
+                </div>
             </HeaderContainer>
-            <div style={{height: '60vh', width: '100%', backgroundColor: 'red'}}>
+            <div style={{height: '60vh', width: '95vw'}}>
                 {
                     isCommandTabSelected ?
                     <CommandTable
-                    
+                        commands={settings?.commands}
                     />
                     :
                     <SourcesForm
-                    
+                        sources={settings?.sources}
                     />
                 }
             </div>
