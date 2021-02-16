@@ -36,7 +36,6 @@ export default class LocalIOController implements ICommandSubscriber {
         const min: number = 1
         const randomName: string = `macro-${Math.floor(Math.random() * (max - min) + min)}`
         this.recordingMacroName = randomName
-        console.log("Recording...")
         this.macroManager.record(randomName)
     }
 
@@ -44,13 +43,11 @@ export default class LocalIOController implements ICommandSubscriber {
         if (this.isRecording){
             this.isRecording = false
             WebServerController.getInstance().sendNewMacro(this.recordingMacroName)
-            console.log("Save macro as name:", this.recordingMacroName)
             this.recordingMacroName = ""
         }
     }
 
     private reset() {
-        console.log("Reset controller completed.");
         this.ioController.reset()
     }
 

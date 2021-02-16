@@ -1,16 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Table, Tag, Space, Modal } from 'antd';
 import { CommandConfig, KeywordConfig } from '../utils/loadConfig';
 import { ColumnsType } from 'antd/lib/table';
 import CommandForm from './CommandForm';
+import useModal from '../hooks/useModal';
 
 interface Props {
     commands?: CommandConfig
+    onDeleteCommand: (index: number) => void
+    onEditCommand: (index: number, newCommand: KeywordConfig) => void
+    isReplace?: boolean
 }
 
 export type DataKeywordConfig = KeywordConfig & {key: string}
 
-const CommandTable: React.FC<Props> = ({ commands }) => {
+const CommandTable: React.FC<Props> = ({ onDeleteCommand, onEditCommand, commands, isReplace }) => {
+  const [isEditModalShow, openEditModal, closeEditModal] = useModal()
+  const [editCommand, setEditCommand] = useState<DataKeywordConfig>()
+
   const columns: ColumnsType<DataKeywordConfig> = [
     {
       title: 'Command',
@@ -59,13 +66,8 @@ const CommandTable: React.FC<Props> = ({ commands }) => {
         <Space size="middle">
           <a
             onClick={() => {
-              Modal.info({
-                title: `Edit Command`,
-                content: <CommandForm />,
-                onOk: () => {
-                  console.log("saved", config.key);
-                }
-              })
+              setEditCommand(config)
+              openEditModal()
             }}
           >
             Edit
@@ -76,7 +78,7 @@ const CommandTable: React.FC<Props> = ({ commands }) => {
                 title: `Confirm Delete Action`,
                 content: `Are You Really Want To Delete "${config.toCommand}" ?`,
                 onOk: () => {
-                  console.log("delete", config.key);
+                  onDeleteCommand(parseInt(config.key))
                 }
               })
             }}
@@ -104,6 +106,10 @@ const CommandTable: React.FC<Props> = ({ commands }) => {
       })
   }
 
+  const onCommandChange = (config: KeywordConfig) => {
+    onEditCommand(parseInt(editCommand?.key || ""), config)
+  }
+
   return (
       <>
         <Table
@@ -113,6 +119,16 @@ const CommandTable: React.FC<Props> = ({ commands }) => {
                 position: ['topRight'],
                 defaultPageSize: 6
             }}
+        />
+        <CommandForm
+          visible={isEditModalShow}
+          closeModal={closeEditModal}
+          title="Edit Command"
+          addNewCommand={onCommandChange}
+          init_keywords={editCommand?.words}
+          init_ratio={editCommand?.ratio}
+          init_selectedKeyword={editCommand?.toCommand}
+          isReplace={isReplace}
         />
       </>
   )

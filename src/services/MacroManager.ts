@@ -49,10 +49,12 @@ export default class MacroManager implements IMacroRecorder, IMacroPlayer {
     private static instance?: IMacroRecorder & IMacroPlayer
     private isRecord: boolean
     private playingMacro: Map<string, boolean>
+    private isReady: boolean
 
     public constructor() {
         this.avaliableMacros = []
         this.isRecord = false
+        this.isReady = false
         this.playingMacro = new Map()
         this.loadMacro()
     }
@@ -94,7 +96,7 @@ export default class MacroManager implements IMacroRecorder, IMacroPlayer {
     }
     
     public async record(marcoName: string){
-        if (this.isRecord) return
+        if (this.isRecord || !this.isReady) return
         WebServerController.getInstance().sendRecording()
         await recordMacro(marcoName)
         this.loadMacro()
@@ -109,5 +111,9 @@ export default class MacroManager implements IMacroRecorder, IMacroPlayer {
     public async delete(macroName: string){
         await removeMacro(macroName)
         this.loadMacro()
+    }
+
+    public setReady(isReady: boolean) {
+        this.isReady = isReady
     }
 }

@@ -8,15 +8,17 @@ import cloneDeep from 'lodash.clonedeep'
 import SourcesForm from '../components/SourcesForm'
 import CommandTable from '../components/CommandTable'
 import useModal from '../hooks/useModal'
-import { Configs } from '../utils/loadConfig'
-import Modal from 'antd/lib/modal'
+import { CommandConfig, Configs, KeywordConfig } from '../utils/loadConfig'
 import CommandForm from '../components/CommandForm'
+import { Checkbox, InputNumber, Tooltip } from 'antd'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 
 const HeaderContainer = styled.div`
     display: flex;
     min-width: 95vw;
     justify-content: space-between;
     padding: 12px;
+    align-items: flex-end;
 `
 
 const SettingPage = () => {
@@ -60,7 +62,6 @@ const SettingPage = () => {
 
     const setSources = (sources: Configs): void => {
         if (!settings) return
-        console.log(sources);
         
         setSettings({
             ...settings,
@@ -68,14 +69,63 @@ const SettingPage = () => {
         })
     }
 
-    const addNewCommand = () => {
-        // add to settings
-        clearCommandForm()
+    const setCommand = (commands: CommandConfig): void => {
+        if (!settings) return
+
+        setSettings({
+            ...settings,
+            commands
+        })
     }
 
-    const clearCommandForm = () => {
+    const onGetCommand = (config: KeywordConfig) => {
+        if (!settings) return
+        let commandConfig = settings.commands
+        let targets = commandConfig.useReplace ? commandConfig.replaces : commandConfig.commands
+        targets = [config, ...targets]
 
-        newModalClose()
+        if (commandConfig.useReplace) commandConfig.replaces = targets
+        else commandConfig.commands = targets
+
+        setSettings({
+            ...settings,
+            commands: commandConfig
+        })
+    }
+
+    const onDeleteCommand = (index: number) => {
+        if (!settings) return
+        let commandConfig = settings.commands
+
+        let targets = commandConfig.useReplace ? commandConfig.replaces : commandConfig.commands
+        targets = targets.filter((_, target: number) => {
+            return target !== index
+        })
+
+        if (commandConfig.useReplace) commandConfig.replaces = targets
+        else commandConfig.commands = targets
+        setSettings({
+            ...settings,
+            commands: commandConfig
+        })
+    }
+
+    const onEditCommand = (index: number, config: KeywordConfig) => {
+        if (!settings) return
+        let commandConfig = settings.commands
+
+        let targets = commandConfig.useReplace ? commandConfig.replaces : commandConfig.commands
+        targets = targets.map((conf: KeywordConfig, target: number) => {
+            if (target === index) return config
+            return conf
+        })
+
+        if (commandConfig.useReplace) commandConfig.replaces = targets
+        else commandConfig.commands = targets
+        setSettings({
+            ...settings,
+            commands: commandConfig
+        })
     }
 
     return (
@@ -107,16 +157,79 @@ const SettingPage = () => {
                         <div>
                             {
                                 isCommandTabSelected &&
-                                <button
-                                    type="button"
-                                    className="mainBtn"
-                                    onClick={() => newModalOpen()}
-                                >
-                                    <span role="img" aria-label="books">
-                                    📝
-                                    </span>
-                                    Add Command
-                                </button>
+                                <>
+
+                                    <div style={{ padding: '0 12px' }}>
+                                        <Tooltip title="ทับคำเก่าด้วยคำใหม่ เพื่อใช้คู่กับ webhook หรือ เปลี่ยนเป็นข้อความพิเศษ" >
+                                            <Checkbox
+                                                style={{color: 'white'}}
+                                                onChange={(e: CheckboxChangeEvent) => {
+                                                    let {commands} = settings
+                                                    commands.useReplace = e.target.checked
+                                                    if (e.target.checked) commands.useOnlyDefined = false
+                                                    setCommand(commands)
+                                                }}
+                                                checked={settings.commands.useReplace}
+                                            >
+                                                Use replace
+                                            </Checkbox>
+                                        </Tooltip>
+
+                                        {
+                                            !settings.commands.useReplace &&
+                                            <Tooltip title="ใช้แค่คำที่ประกาศไว้เท่านั้นเพื่อความปลอดภัย">
+                                                <Checkbox
+                                                    style={{color: 'white'}}
+                                                    onChange={(e: CheckboxChangeEvent) => {
+                                                        let {commands} = settings
+                                                        commands.useOnlyDefined = e.target.checked
+                                                        setCommand(commands)
+                                                    }}
+                                                    checked={settings.commands.useOnlyDefined}
+                                                >
+                                                    Use only defined
+                                                </Checkbox>
+                                            </Tooltip>
+                                        }
+                                        
+                                        <Tooltip title="จำนวนข้อความต้องถึงกำหนดไว้เพื่อทำงาน">
+                                            <Checkbox
+                                                style={{color: 'white'}}
+                                                onChange={(e: CheckboxChangeEvent) => {
+                                                    let {commands} = settings
+                                                    commands.usePool = e.target.checked
+                                                    setCommand(commands)
+                                                }}
+                                                checked={settings.commands.usePool}
+                                            >
+                                                Use pool
+                                            </Checkbox>
+                                        </Tooltip>
+
+                                        <InputNumber
+                                            size='small'
+                                            min={0}
+                                            value={settings.commands.pool.defaultRatio}
+                                            onChange={(e) => {
+                                                let {commands} = settings
+                                                commands.pool.defaultRatio = parseInt(e?.toString() || "0")
+                                                setCommand(commands)
+                                            }}
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        className="mainBtn"
+                                        onClick={() => newModalOpen()}
+                                    >
+                                        <span role="img" aria-label="books">
+                                        📝
+                                        </span>
+                                        Add Command
+                                    </button>
+
+                                </>
                             }
                             <button
                                 type="button"
@@ -134,7 +247,10 @@ const SettingPage = () => {
                         {
                             isCommandTabSelected ?
                             <CommandTable
-                            commands={settings.commands}
+                                commands={settings.commands}
+                                onDeleteCommand={onDeleteCommand}
+                                onEditCommand={onEditCommand}
+                                isReplace={settings?.commands.useReplace}
                             />
                             :
                             <SourcesForm
@@ -145,9 +261,13 @@ const SettingPage = () => {
                     </div>
                 </>
             }
-            <Modal title="Create New Command" visible={isNewModalOpen as boolean} onOk={addNewCommand} onCancel={clearCommandForm}>
-                <CommandForm />
-            </Modal>
+            <CommandForm
+                title="Create New Command"
+                visible={isNewModalOpen}
+                closeModal={newModalClose}
+                addNewCommand={onGetCommand}
+                isReplace={settings?.commands.useReplace}
+            />
         </InnerPageLayout>
     )
 }

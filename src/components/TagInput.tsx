@@ -1,24 +1,14 @@
-import React, { ChangeEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Tag, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { TagState } from './CommandForm';
 
 interface Props {
-    init_tags: string[]
-    onChange: (tags: string[]) => void
+    setTagState: (tagState: TagState) => void
+    tagState: TagState
 }
 
-interface TagState {
-    tags: string[]
-    inputVisible: boolean
-    inputValue: string
-}
-
-const TagInput: React.FC<Props> = ({ init_tags, onChange }) => {
-    const [tagState, setTagState] = useState<TagState>({
-        tags: init_tags || [],
-        inputVisible: false,
-        inputValue: '',
-    })
+const TagInput: React.FC<Props> = ({ tagState, setTagState }) => {
     const { tags, inputVisible, inputValue } = tagState;
 
     const handleClose = (removedTag: string) => {
@@ -45,7 +35,6 @@ const TagInput: React.FC<Props> = ({ init_tags, onChange }) => {
             inputVisible: false,
             inputValue: '',
         });
-        onChange(tags)
     };
 
     const forMap = (tag: string) => {
@@ -77,8 +66,8 @@ const TagInput: React.FC<Props> = ({ init_tags, onChange }) => {
             {inputVisible && (
                 <Input
                     type="text"
-                    size="small"
-                    style={{ width: 78 }}
+                    size="middle"
+                    style={{ width: '100%' }}
                     value={inputValue}
                     onChange={handleInputChange}
                     onBlur={handleInputConfirm}
@@ -87,8 +76,8 @@ const TagInput: React.FC<Props> = ({ init_tags, onChange }) => {
                 />
             )}
             {!inputVisible && (
-                <Tag onClick={showInput} className="site-tag-plus">
-                    <PlusOutlined /> New Tag
+                <Tag style={{ width: '100%'}} onClick={showInput} className="site-tag-plus">
+                    <PlusOutlined /> New Word
                 </Tag>
             )}
         </>

@@ -104,9 +104,17 @@
 			"toCommand": "macro-8662692693327605"
 		}
 	],
-	"replaces": [],
-	"useOnlyDefined": true,
-	"useReplace": false,
+	"replaces": [
+		{
+			"words": [
+				"hi"
+			],
+			"toCommand": "sayHi",
+			"ratio": 6
+		}
+	],
+	"useOnlyDefined": false,
+	"useReplace": true,
 	"usePool": true,
 	"pool": {
 		"defaultRatio": 3

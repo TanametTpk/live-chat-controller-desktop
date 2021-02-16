@@ -165,7 +165,7 @@ const YoutubeScripingForm: React.FC<Props> = (props: Props) => {
                     sources.youtube.INTERVAL = interval
                     props.setSources(sources)
                 }}
-                value={props.sources.youtube.INTERVAL}
+                value={props.sources.youtube.INTERVAL || 1000}
             />
         </div>
     )

@@ -31,7 +31,6 @@ export default class WebServerController {
 
     private setup(): void{
         this.io.on("connection", (socket: Socket) => {
-            console.log("connented");
             this.sendMacros(MacroManager.getInstance().getMacroList())
 
             socket.on('rename-macro', (oldName: string, newName: string) => {
@@ -66,18 +65,23 @@ export default class WebServerController {
         ipcMain.on("macro:record", (_: IpcMainEvent, name: string) => {
             MacroManager.getInstance().record(name)
         })
+
+        ipcMain.on("macro:ready", (_: IpcMainEvent) => {
+            MacroManager.getInstance().setReady(true)
+        })
+
+        ipcMain.on('macro:quit', (_: IpcMainEvent) => {
+            MacroManager.getInstance().setReady(false)
+        })
     }
 
     public start(): void {
         this.isStart = true
-        this.http.listen(this.port, () => {
-            console.log(`socket is running on: http://localhost:${this.port}`)
-        })
+        this.http.listen(this.port)
     }
 
     public stop(): void {
         this.http.close()
-        console.log(`socket is closed`)
     }
 
     public sendNewMacro(macroName: string): void {

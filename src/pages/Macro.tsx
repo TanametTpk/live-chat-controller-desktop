@@ -3,7 +3,7 @@ import { ipcRenderer, IpcRendererEvent } from 'electron'
 import styled from 'styled-components'
 import InnerPageLayout from '../layouts/InnerPageLayout'
 import MacroList from '../components/MacroList'
-import { Modal, Input } from 'antd';
+import { Modal, Input, Card } from 'antd';
 
 const Container = styled.div`
     color: black;
@@ -34,9 +34,12 @@ const Macro = () => {
             setPlayingMacro("")
         })
 
+        ipcRenderer.send('macro:ready')
+
         getMacros()
 
         return () => {
+            ipcRenderer.send('macro:quit')
             ipcRenderer.removeAllListeners('macro:list')
             ipcRenderer.removeAllListeners('macro:onStartRecord')
             ipcRenderer.removeAllListeners('macro:onStopRecord')
@@ -104,10 +107,10 @@ const Macro = () => {
             <Container>
                 {
                     playingMacro ?
-                    <>
+                    <Card>
                         <h1>{playingMacro} are playing</h1>
                         <p>Press Esc to stop</p>
-                    </>
+                    </Card>
                     :
                     <>
                         <div>
@@ -122,7 +125,7 @@ const Macro = () => {
                                         <span role="img" aria-label="books">
                                         🔴
                                         </span>
-                                        Record
+                                        Record (F6)
                                     </>
                                     : <> To Stop Record Press Esc </>
                                 }

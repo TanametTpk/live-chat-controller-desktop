@@ -18,7 +18,6 @@ export default class YoutubeApiLiveChatPublisher implements ILiveChatPublisher {
 
     public start = (): void => {
         this.youtubeCli.on('ready', () => {
-            console.log('ready!')
             this.youtubeCli.listen(1000)
         })
         
@@ -33,7 +32,7 @@ export default class YoutubeApiLiveChatPublisher implements ILiveChatPublisher {
         })
         
         this.youtubeCli.on('error', (error: any) => {
-            console.log(error)
+
         })
     }
     

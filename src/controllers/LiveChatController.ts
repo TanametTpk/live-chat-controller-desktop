@@ -3,13 +3,13 @@ import IKeyboardIOController from '../services/interfaces/IKeyboardIOController'
 import ILiveChatSubscriber from '../services/interfaces/ILiveChatSubscriber';
 import IMacroPlayer from '../services/interfaces/IMacroPlayer';
 import IMouseIOController from '../services/interfaces/IMouseIOController';
-import KeywordBuilder from '../utils/KeywordBuilder';
 import IAction from './Actions/interfaces/IAction';
 import KeyboardPressAction from './Actions/KeyboardActions/KeyboardPressAction';
 import MacroAction from './Actions/MacroActions/MacroAction';
 import MouseClickAction from './Actions/MouseActions/MouseClickAction';
 import MouseMoveAction from './Actions/MouseActions/MouseMoveAction';
 import MouseScrollAction from './Actions/MouseActions/MouseScrollAction';
+import * as ActionKeywords from '../keywords';
 
 export default class LiveChatController implements ILiveChatSubscriber {
   private mouseController: IMouseIOController;
@@ -32,93 +32,22 @@ export default class LiveChatController implements ILiveChatSubscriber {
     this.actions = [
       new MouseMoveAction(
         this.mouseController,
-        new KeywordBuilder()
-          .addKeyword('mouse', true)
-          .addKeyword('move', true)
-          .addKeywords(['up', 'down', 'left', 'right'], true)
-          .addKeyword('strong')
-          .build()
+        ActionKeywords.mouseMoveKeywords
       ),
 
       new MouseClickAction(
         this.mouseController,
-        new KeywordBuilder()
-          .addKeyword('click', true)
-          .addKeywords(['left', 'right', 'middle'])
-          .addKeywords(['hold', 'release'])
-          .build()
+        ActionKeywords.mouseClickKeywords
       ),
 
       new MouseScrollAction(
         this.mouseController,
-        new KeywordBuilder()
-          .addKeyword('scroll', true)
-          .addKeywords(['up', 'down', 'left', 'right'], true)
-          .addKeyword('strong')
-          .build()
+        ActionKeywords.mouseScrollKeywords
       ),
 
       new KeyboardPressAction(
         this.keyboardController,
-        new KeywordBuilder()
-          .addKeyword('press', true)
-          .addKeywords(
-            [
-              'a',
-              'b',
-              'c',
-              'd',
-              'e',
-              'f',
-              'g',
-              'h',
-              'i',
-              'j',
-              'k',
-              'l',
-              'm',
-              'n',
-              'o',
-              'p',
-              'q',
-              'r',
-              's',
-              't',
-              'u',
-              'v',
-              'w',
-              'x',
-              'y',
-              'z',
-              'backspace',
-              'delete',
-              'enter',
-              'tab',
-              'escape',
-              'up',
-              'down',
-              'right',
-              'left',
-              'command',
-              'alt',
-              'control',
-              'shift',
-              'space',
-              'numpad_0',
-              'numpad_1',
-              'numpad_2',
-              'numpad_3',
-              'numpad_4',
-              'numpad_5',
-              'numpad_6',
-              'numpad_7',
-              'numpad_8',
-              'numpad_9',
-            ],
-            true
-          )
-          .addKeywords(['hold', 'release'])
-          .build()
+        ActionKeywords.keyboardKeywords
       ),
 
       new MacroAction(this.macroController),
@@ -126,7 +55,6 @@ export default class LiveChatController implements ILiveChatSubscriber {
   }
 
   public receivedChat = (chats: Chat[]) => {
-    console.log(chats);
     for (let i = 0; i < chats.length; i++) {
       const chat = chats[i];
       this.doAction(chat.message);
