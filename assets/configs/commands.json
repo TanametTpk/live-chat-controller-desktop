@@ -39,83 +39,13 @@
 				"rh"
 			],
 			"toCommand": "press d hold"
-		},
-		{
-			"words": [
-				"ซ้ายค้าง",
-				"left hold",
-				"lh"
-			],
-			"toCommand": "press a hold"
-		},
-		{
-			"words": [
-				"ลงค้าง",
-				"down hold",
-				"dh"
-			],
-			"toCommand": "press s hold"
-		},
-		{
-			"words": [
-				"ขึ้นค้าง",
-				"up hold",
-				"uh"
-			],
-			"toCommand": "press w hold"
-		},
-		{
-			"words": [
-				"ขวาปล่อย",
-				"right release",
-				"rr"
-			],
-			"toCommand": "press d release"
-		},
-		{
-			"words": [
-				"ซ้ายปล่อย",
-				"left release",
-				"lr"
-			],
-			"toCommand": "press a release"
-		},
-		{
-			"words": [
-				"ลงปล่อย",
-				"down release",
-				"dr"
-			],
-			"toCommand": "press s release"
-		},
-		{
-			"words": [
-				"ขึ้นปล่อย",
-				"up release",
-				"ur"
-			],
-			"toCommand": "press w release"
-		},
-		{
-			"words": [
-				"ฆ่า",
-				"kill"
-			],
-			"toCommand": "macro-8662692693327605"
 		}
 	],
 	"replaces": [
-		{
-			"words": [
-				"hi"
-			],
-			"toCommand": "sayHi",
-			"ratio": 6
-		}
 	],
-	"useOnlyDefined": false,
-	"useReplace": true,
-	"usePool": true,
+	"useOnlyDefined": true,
+	"useReplace": false,
+	"usePool": false,
 	"pool": {
 		"defaultRatio": 3
 	}

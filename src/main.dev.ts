@@ -78,6 +78,7 @@ const createWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
     },
+    resizable: false
   });
 
   liveChatManager = new LiveChatManager(
