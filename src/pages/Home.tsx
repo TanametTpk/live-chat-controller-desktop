@@ -58,6 +58,7 @@ const Home = () => {
         <Container>
             <HeaderText>Live Chat Controller</HeaderText>
             <Checkbox
+                style={{color: "white"}}
                 onChange={(e) => setNotify(e.target.checked)}
                 checked={isShowNotify}
             >
