@@ -39,8 +39,6 @@ export default class ScrapingLiveChatPublisher implements ILiveChatPublisher {
     private publish = (chats: Chat[]): void => {
         for (let i = 0; i < this.subscribers.length; i++) {
             const subscriber = this.subscribers[i];
-            console.log(chats);
-            
             subscriber.receivedChat(chats)
         }
     }
@@ -64,8 +62,6 @@ export default class ScrapingLiveChatPublisher implements ILiveChatPublisher {
         await page.setViewport({ width: 1400, height: 937 })
         
         while (!this.isStopScraping) {
-            console.log("loop", this.isStopScraping);
-            
             let chats: string = await page.evaluate( () => {
                 const elements: NodeListOf<Element> = document.querySelectorAll('yt-live-chat-text-message-renderer.yt-live-chat-item-list-renderer')
                 const result = []
