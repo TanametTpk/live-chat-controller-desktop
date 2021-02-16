@@ -1,19 +1,19 @@
 {
 	"youtube": {
-		"allow": false,
+		"allow": true,
 		"useAPI": false,
 		"API_KEY": "",
 		"CHANNEL_ID": "",
-		"STREAM_ID": "",
-		"INTERVAL": null
+		"STREAM_ID": "5qap5aO4i9A",
+		"INTERVAL": 1000
 	},
 	"discord": {
 		"allow": false,
-		"token": ""
+		"token": "ODA2NzIxMjEwNjcwNzc2MzYy.YBtjrA.0DJ85U5XDLTF0ChIn181LHLmV7o"
 	},
 	"twitch": {
 		"allow": false,
-		"channel": ""
+		"channel": "martiiex"
 	},
 	"webhooks": {
 		"allow": false,

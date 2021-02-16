@@ -1,7 +1,10 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { ipcRenderer } from 'electron'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
+import { notification } from 'antd'
+import Chat from '../models/chat'
+import Checkbox from 'antd/lib/checkbox/Checkbox'
 
 const Container = styled.div`
     height: 100vh
@@ -20,7 +23,23 @@ const HeaderText = styled.h1`
 
 const Home = () => {
     const [isStart, setStart] = useState<boolean>(false)
+    const [isShowNotify, setNotify] = useState<boolean>(false)
     const history = useHistory()
+
+    useEffect(() => {
+        if (isShowNotify) ipcRenderer.on('receivedChats', (_, chats: Chat[]) => {
+            for (let i = 0; i < chats.length; i++) {
+                const chat = chats[i];
+                notification.open({
+                    message: `Message From ${chat.author_name}`,
+                    description: chat.message
+                })
+            }
+        })
+        return () => {
+            ipcRenderer.removeAllListeners('receivedChats')
+        }
+    }, [isShowNotify])
 
     const toggleStart = () => {
         if (isStart) {
@@ -38,6 +57,12 @@ const Home = () => {
     return (
         <Container>
             <HeaderText>Live Chat Controller</HeaderText>
+            <Checkbox
+                onChange={(e) => setNotify(e.target.checked)}
+                checked={isShowNotify}
+            >
+                show message
+            </Checkbox>
             <div>
                 <button
                     type="button"

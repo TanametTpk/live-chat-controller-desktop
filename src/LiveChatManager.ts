@@ -27,6 +27,7 @@ import WebServerController from './controllers/WebServerController';
 import LiveChatReplaceAdapter from './services/LiveChatReplaceAdapter';
 import PoolCommandAdapter from './services/PoolCommandAdapter';
 import { Settings, writeConfig } from './utils/ConfigWriter';
+import NotificationLiveChatController from './controllers/NotificationLiveChatController';
 
 export default class LiveChatManager {
   private sourcePath: string;
@@ -50,6 +51,8 @@ export default class LiveChatManager {
   private chatSubscriber!: ILiveChatSubscriber;
 
   private webHookSubscriber!: ILiveChatSubscriber;
+
+  private notificationSubscriber!: ILiveChatSubscriber;
 
   private ioPublisher!: ICommandPublisher;
 
@@ -94,6 +97,7 @@ export default class LiveChatManager {
       if (!allowList[i]) continue;
       const publisher = publishers[i];
 
+      publisher.register(this.notificationSubscriber)
       publisher.register(this.chatSubscriber);
       if (this.source.webhooks.allow)
         publisher.register(this.webHookSubscriber);
@@ -142,6 +146,7 @@ export default class LiveChatManager {
       this.macroController
     );
     this.webHookSubscriber = new WebHookController(this.source.webhooks.urls);
+    this.notificationSubscriber = new NotificationLiveChatController(this.mainWindow)
   }
 
   private createPublishers() {
