@@ -7,7 +7,7 @@ import { app } from 'electron';
 const exec = util.promisify(require('child_process').exec);
 
 const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, '../assets')
+    ? path.join(process.resourcesPath, './assets')
     : path.join(__dirname, '../../assets');
 
 const getAssetPath = (...paths: string[]): string => {
