@@ -4,6 +4,17 @@ import IChatCache from "./interfaces/IChatCache";
 import ILiveChatPublisher from "./interfaces/ILiveChatPublisher";
 import ILiveChatSubscriber from "./interfaces/ILiveChatSubscriber";
 import puppeteer from "puppeteer";
+import path from "path";
+import { app } from "electron";
+
+const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, './app.asar.unpacked/node_modules/puppeteer/.local-chromium/win64-848005/chrome-win')
+    : undefined;
+
+const getAssetPath = (...paths: string[]): string | undefined => {
+    if (!RESOURCES_PATH) return
+    return path.join(RESOURCES_PATH, ...paths);
+};
 
 export interface ScrapingConfig {
     STREAM_ID: string
@@ -46,14 +57,15 @@ export default class ScrapingLiveChatPublisher implements ILiveChatPublisher {
     private scripingLiveChat = async() => {
         const browser = await puppeteer.launch({
             headless: false,
-            devtools: true,
+            devtools: false,
             args: [
                 '--ignore-certificate-errors',
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-accelerated-2d-canvas',
                 '--disable-gpu'
-            ]
+            ],
+            executablePath: getAssetPath('./chrome.exe')
         })
         const page = await browser.newPage()
     
