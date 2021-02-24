@@ -14,7 +14,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-const pythonPath: string = getAssetPath('./env/Scripts/python')
+const pythonPath: string = 'python'
 const scriptPath: string = getAssetPath('./scripts/macroRecorder/commandline.py')
 
 async function listCommands(): Promise<string[] | undefined> {
