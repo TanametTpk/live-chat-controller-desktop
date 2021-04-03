@@ -2,7 +2,7 @@
 Live chat controller is code for control your pc(window only) with live chat on youtube/discord/twitch
 
 # Features
-- get chat from youtube/discord/twitch live chat and control pc
+- get chat from youtube/discord/twitch/facebook live chat and control pc
 - custom setting command
 - record and set input Macro for new command
 - local website UI for easier interaction and monitor (next release)
@@ -11,7 +11,7 @@ Live chat controller is code for control your pc(window only) with live chat on 
 Live chat controller คือ โปรแกรมควบคุมคอม โดยดึงคำสั่งจาก live chat บน youtube/discord/twitch
 
 # สิ่งที่ทำได้
-- ดึงข้อมูลจาก youtube/discord/twitch chat มาทำงาน
+- ดึงข้อมูลจาก youtube/discord/twitch/facebook chat มาทำงาน
 - แก้ไข/ตั้งรูปแบบคำสั่งเอง
 - บันทึก และ ตั้ง Macro ให้เป็นคำสั่งใหม่
 - มี local Web UI ทำให้ติดต่อ และ สังเกตุการทำงานได้ง่ายขึ้น (ยังไม่เสร็จ)
@@ -29,6 +29,11 @@ Live chat controller คือ โปรแกรมควบคุมคอม 
 
 - Discord setting example
 <img src=".erb/img/discord-setting.PNG" width="100%" />
+
+- Facebook setting example
+    - Where do i find access_token?
+        - from facebook developer (https://developers.facebook.com/)
+<img src=".erb/img/facebook-setting.PNG" width="100%" />
 
 - Webhook setting example <b>(this is not source but send message to other server)</b>
 <img src=".erb/img/webhook-setting.PNG" width="100%" />
