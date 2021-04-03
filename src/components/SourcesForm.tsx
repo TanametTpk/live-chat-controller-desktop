@@ -290,7 +290,7 @@ const FacebookForm: React.FC<Props> = (props: Props) => {
                 sources.facebook.allow = check
                 props.setSources(sources)
             }}
-            value={props.sources.discord.allow}
+            value={props.sources.facebook.allow}
         >
             <TextFieldSource
                 title="Facebook Access Token"
