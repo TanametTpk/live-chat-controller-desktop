@@ -1,7 +1,7 @@
 {
   "name": "live-chat-controller-desktop",
   "productName": "live-chat-controller-desktop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Live Chat Controller application is desktop application for get live chat to control your pc",
   "main": "./main.prod.js",
   "author": {
