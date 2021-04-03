@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Configs } from '../utils/loadConfig'
-import { Input, InputNumber, Checkbox, Card  } from 'antd';
+import { Input, InputNumber, Checkbox, Card, Select  } from 'antd';
 import styled from 'styled-components'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
@@ -17,6 +17,10 @@ interface TextFieldSourceProps {
     value: any
 }
 
+interface SelectionInputProps {
+    choices: string[]
+}
+
 interface AvaliableFormProps {
     sourceName: string
     value: any
@@ -30,7 +34,10 @@ const SourceHeader = styled.h1`
 const TextFieldTitle = styled.h2`
     margin: 12px;
 `
-
+/*
+    create directory and move other component to other file,
+    for better code.
+*/
 const TextFieldSource: React.FC<TextFieldSourceProps> = ({
     title,
     placeholder,
@@ -53,6 +60,34 @@ const TextFieldSource: React.FC<TextFieldSourceProps> = ({
                     />
                     : <Input placeholder={placeholder} onChange={onChange} value={value} />
                 }
+            </div>
+        </div>
+    )
+}
+
+const SelectionInput: React.FC<TextFieldSourceProps & SelectionInputProps> = ({
+    title,
+    placeholder,
+    onChange,
+    value,
+    choices
+}) => {
+
+    return (
+        <div>
+            <TextFieldTitle>{title}</TextFieldTitle>
+            <div style={{padding: '0 24px'}}>
+                <Select
+                    placeholder={placeholder}
+                    onChange={onChange}
+                    value={value}
+                >
+                    {
+                        choices.map((choice: string, index: number) => (
+                            <Select.Option value={choice} key={index}>{choice}</Select.Option>
+                        ))
+                    }
+                </Select>
             </div>
         </div>
     )
@@ -246,11 +281,64 @@ const WebHookForm: React.FC<Props> = (props: Props) => {
     )
 }
 
+const FacebookForm: React.FC<Props> = (props: Props) => {
+    return (
+        <AvaliableForm
+            sourceName="Facebook"
+            onCheck={(check) => {
+                let sources = props.sources
+                sources.facebook.allow = check
+                props.setSources(sources)
+            }}
+            value={props.sources.discord.allow}
+        >
+            <TextFieldSource
+                title="Facebook Access Token"
+                placeholder="token"
+                onChange={(e) => {
+                    let sources = props.sources
+                    sources.facebook.access_token = e.target.value
+                    props.setSources(sources)
+                }}
+                value={props.sources.facebook.access_token}
+            />
+
+            <TextFieldSource
+                title="Video id"
+                placeholder="video id"
+                onChange={(e) => {
+                    let sources = props.sources
+                    sources.facebook.video_id = e.target.value
+                    props.setSources(sources)
+                }}
+                value={props.sources.facebook.video_id}
+            />
+
+            <SelectionInput 
+                title="Comment Rate"
+                placeholder="Select a Comment Rate"
+                onChange={(value) => {
+                    let sources = props.sources
+                    sources.facebook.comment_rate = value
+                    props.setSources(sources)
+                }}
+                value={props.sources.facebook.comment_rate}
+                choices={[
+                    'one_per_two_seconds',
+                    'ten_per_second',
+                    'one_hundred_per_second'
+                ]}
+            />
+        </AvaliableForm>
+    )
+}
+
 const SourcesForm: React.FC<Props> = (props: Props) => {
     let Sources: React.FC<Props>[] = [
         YoutubeForm,
         TwitchForm,
         DiscordForm,
+        FacebookForm,
         WebHookForm
     ]
 

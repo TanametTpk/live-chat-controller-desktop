@@ -21,6 +21,7 @@ const HeaderContainer = styled.div`
     align-items: flex-end;
 `
 
+// this is really smell code - should we refactor? or we didn't work with this project anymore lol?
 const SettingPage = () => {
     const [isCommandTabSelected, setCommandTab]             = useState<boolean>(false)
     const [settings, setSettings]                           = useState<Settings>()
