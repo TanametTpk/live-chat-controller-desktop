@@ -28,39 +28,32 @@ import LiveChatReplaceAdapter from './services/LiveChatReplaceAdapter';
 import PoolCommandAdapter from './services/PoolCommandAdapter';
 import { Settings, writeConfig } from './utils/ConfigWriter';
 import NotificationLiveChatController from './controllers/NotificationLiveChatController';
+import FacebookPublisher from './services/FacebookPublisher';
 
 export default class LiveChatManager {
   private sourcePath: string;
-
   private commandPath: string;
 
   private mainWindow: BrowserWindow;
 
   private source!: Configs;
-
   private commandConfig!: CommandConfig;
 
   private webServer!: WebServerController;
-
   private ioController!: RobotJSIOController;
-
-  private localController!: ICommandSubscriber;
-
   private macroController!: IMacroPlayer;
-
+  
+  private localController!: ICommandSubscriber;
   private chatSubscriber!: ILiveChatSubscriber;
-
   private webHookSubscriber!: ILiveChatSubscriber;
-
   private notificationSubscriber!: ILiveChatSubscriber;
 
+  // TODO - should we have publisher/subscriber/controller manager? - Refactor ?
   private ioPublisher!: ICommandPublisher;
-
   private discordPublisher!: ILiveChatPublisher;
-
   private twitchPublisher!: ILiveChatPublisher;
-
   private youtubePublisher!: ILiveChatPublisher;
+  private facebookPublisher!: ILiveChatPublisher;
 
   public constructor(
     sourceConfigPath: string,
@@ -81,16 +74,19 @@ export default class LiveChatManager {
   }
 
   public start(): void {
+    // TODO - repeat code - Refactor ?
     const allowList: boolean[] = [
       this.source.youtube.allow,
       this.source.discord.allow,
       this.source.twitch.allow,
+      this.source.facebook.allow
     ];
 
     const publishers: ILiveChatPublisher[] = [
       this.youtubePublisher,
       this.discordPublisher,
       this.twitchPublisher,
+      this.facebookPublisher
     ];
 
     for (let i = 0; i < publishers.length; i++) {
@@ -153,6 +149,11 @@ export default class LiveChatManager {
     this.ioPublisher = new LocalIOPublisher();
     this.discordPublisher = new DiscordChatPublisher(this.source.discord.token);
     this.twitchPublisher = new TwitchChatPublisher(this.source.twitch.channel);
+    this.facebookPublisher = new FacebookPublisher(
+        this.source.facebook.access_token,
+        this.source.facebook.video_id,
+        this.source.facebook.comment_rate
+    )
 
     this.youtubePublisher = this.source.youtube.useAPI
       ? new YoutubeApiLiveChatPublisher(this.source.youtube)
@@ -165,6 +166,7 @@ export default class LiveChatManager {
   }
 
   private createAdapters() {
+    // TODO - smell code with whole method - Refactor ?
     if (this.commandConfig.useOnlyDefined) {
       this.chatSubscriber = new LiveChatCustomCommandAdapter(
         this.chatSubscriber,
@@ -213,16 +215,19 @@ export default class LiveChatManager {
   }
 
   public close(): void {
+    // TODO - repeat code - Refactor ?
     let allowList: boolean[] = [
       this.source.youtube.allow,
       this.source.discord.allow,
       this.source.twitch.allow,
+      this.source.facebook.allow
     ];
 
     let publishers: ILiveChatPublisher[] = [
       this.youtubePublisher,
       this.discordPublisher,
       this.twitchPublisher,
+      this.facebookPublisher
     ];
 
     this.ioPublisher.stop();

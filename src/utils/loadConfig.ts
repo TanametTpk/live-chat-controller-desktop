@@ -43,10 +43,18 @@ export interface TwitchConfig {
     allow: boolean
 }
 
+export interface FacebookConfig {
+    allow: boolean
+    access_token: string
+    video_id: string
+    comment_rate: 'one_per_two_seconds' | 'ten_per_second' | 'one_hundred_per_second'
+}
+
 export interface Configs {
     youtube: YoutubeConfig
     discord: DiscordConfig
     twitch: TwitchConfig
+    facebook: FacebookConfig
     webhooks: WebHookConfig
 }
 

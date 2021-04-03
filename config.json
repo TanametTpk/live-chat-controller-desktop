@@ -15,6 +15,12 @@
         "allow": false,
         "channel": "name"
     },
+    "facebook": {
+        "allow": false,
+        "access_token": "",
+        "video_id": "",
+        "comment_rate": "one_per_two_seconds"
+    },
     "webhooks": {
         "allow": false,
         "urls": [
