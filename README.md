@@ -28,6 +28,8 @@ Live chat controller คือ โปรแกรมควบคุมคอม 
 <img src=".erb/img/twitch-setting.PNG" width="100%" />
 
 - Discord setting example
+    - Go to Discord Developer Site
+    - Create Bot!!
 <img src=".erb/img/discord-setting.PNG" width="100%" />
 
 - Facebook setting example
